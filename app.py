@@ -49,7 +49,7 @@ class TeamMembership(db.Model):
 @login_required
 def team_stats():
     # Get the current user's team ID
-    team_id = current_user.teams[0].team_id  # Adjust to match your structure if necessary
+    team_id = current_user.teams[0].team_id
     
     # Fetch all team members including the current user
     members = User.query.join(TeamMembership).filter_by(team_id=team_id).all()
@@ -142,7 +142,7 @@ def accept_invite(notification_id):
     if notification and notification.team_id:
         team_membership = TeamMembership(user_id=current_user.id, team_id=notification.team_id)
         db.session.add(team_membership)
-        db.session.delete(notification)  # Remove the notification after acceptance
+        db.session.delete(notification)
         db.session.commit()
         return jsonify({'message': 'Invite accepted and joined the team!'})
     return jsonify({'error': 'Notification not found or no team associated!'}), 404
