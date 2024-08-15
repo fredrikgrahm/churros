@@ -16,7 +16,6 @@ const Profile = ({ username }) => {
         <li><Link to="/notifications">Notifications</Link></li>
       </ul>
     </div>
-    //forth push
   );
 };
 
