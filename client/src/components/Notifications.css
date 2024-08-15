@@ -1,0 +1,25 @@
+.notifications-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    text-align: left;
+}
+
+.notifications-container h3 {
+    color: #ff9900;
+    margin-bottom: 20px;
+}
+
+.notifications-container ul {
+    list-style: none;
+    padding: 0;
+}
+
+.notifications-container li {
+    background-color: #f7f7f7;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+}

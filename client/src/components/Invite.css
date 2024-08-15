@@ -1,0 +1,75 @@
+/* Invite.css */
+
+.invite-container {
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 400px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+}
+
+.clear-button {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #666;
+}
+
+.clear-button:hover {
+  color: #000;
+}
+
+.popup {
+  position: absolute;
+  background-color: #ffcc00;
+  color: #333;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 5px;
+  width: calc(100% - 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 10;
+}
+
+.autocomplete-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: calc(100% - 20px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.autocomplete-list li {
+  padding: 10px;
+  cursor: pointer;
+  color: #333;
+}
+
+.autocomplete-list li:hover {
+  background-color: #f0f0f0;
+}
