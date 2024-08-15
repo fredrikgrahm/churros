@@ -22,7 +22,15 @@ const Stats = () => {
     const fetchTeamStats = async () => {
       try {
         const result = await axios.get('http://localhost:5000/team_stats', { withCredentials: true });
-        setTeamStats(result.data);
+        let fetchedTeamStats = result.data;
+
+        // Ensure the current user is included in the team stats
+        const currentUserInTeam = fetchedTeamStats.find(member => member.username === userStats.username);
+        if (!currentUserInTeam) {
+          fetchedTeamStats.push(userStats);
+        }
+
+        setTeamStats(fetchedTeamStats);
       } catch (err) {
         console.error(err);
       }
@@ -70,3 +78,4 @@ const Stats = () => {
 };
 
 export default Stats;
+

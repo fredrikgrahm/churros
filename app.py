@@ -48,10 +48,27 @@ class TeamMembership(db.Model):
 @app.route('/team_stats', methods=['GET'])
 @login_required
 def team_stats():
-    team_id = current_user.teams[0].id  # Adjust according to your data structure
+    # Get the current user's team ID
+    team_id = current_user.teams[0].team_id  # Adjust to match your structure if necessary
+    
+    # Fetch all team members including the current user
     members = User.query.join(TeamMembership).filter_by(team_id=team_id).all()
+
+    # Ensure the current user is included
+    current_user_stats = {
+        'username': current_user.username,
+        'points': current_user.points
+    }
+    
+    # Add current user's stats to the list if not already included
+    if current_user_stats['username'] not in [m.username for m in members]:
+        members.append(current_user_stats)
+
+    # Format the stats to be sent as JSON
     team_stats = [{'username': member.username, 'points': member.points} for member in members]
+    
     return jsonify(team_stats)
+
 
 
 
@@ -212,6 +229,9 @@ def login():
         return jsonify({'message': 'Login successful'})
     else:
         return jsonify({'message': 'Login failed'}), 401
+
+
+
 
 @app.route('/dashboard', methods=['GET'])
 @login_required
