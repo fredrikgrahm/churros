@@ -30,7 +30,7 @@ const Profile = ({ username }) => {
       <p>Welcome, {username}!</p>
       {/* Display the team name */}
       {teamName && <p>Team: {teamName}</p>}
-      <Link to="/team">View Team Members</Link> {/* Add this link */}
+      <Link to="/team">View Team Members</Link>
 
       <h3>Account Links</h3>
       <ul className="profile-links">

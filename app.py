@@ -57,6 +57,13 @@ def team_info():
             return jsonify({'team_name': team.name})
     return jsonify({'team_name': None})
 
+@app.route('/team_name', methods=['GET'])
+@login_required
+def team_name():
+    team = Team.query.join(TeamMembership).filter(TeamMembership.user_id == current_user.id).first()
+    if team:
+        return jsonify({'name': team.name, 'isOwner': team.owner_id == current_user.id})
+    return jsonify({'error': 'No team found'}), 404
 
     
 
@@ -73,10 +80,11 @@ class TeamMembership(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
-    rank = db.Column(db.String(50), default='member')  # New field for rank
+    rank = db.Column(db.String(50), nullable=False, default='Member')
 
     user = db.relationship('User', back_populates='teams')
     team = db.relationship('Team', back_populates='members')
+
 
 @app.route('/team_members', methods=['GET'])
 @login_required
@@ -95,6 +103,24 @@ def team_members():
         
         return jsonify(team_members_data)
     return jsonify({'error': 'User is not part of any team.'}), 404
+
+
+@app.route('/delete_team/<int:team_id>', methods=['DELETE'])
+@login_required
+def delete_team(team_id):
+    # Fetch the team by ID
+    team = Team.query.get(team_id)
+
+    # Check if team exists and current user is the owner
+    if team and team.owner_id == current_user.id:
+        # Delete all memberships first
+        TeamMembership.query.filter_by(team_id=team.id).delete()
+        db.session.delete(team)
+        db.session.commit()
+        return jsonify({'message': 'Team deleted successfully!'}), 200
+    else:
+        return jsonify({'error': 'Team not found or unauthorized!'}), 404
+
 
 
 @app.route('/team_stats', methods=['GET'])
@@ -171,13 +197,13 @@ def send_invite():
             db.session.add(team)
             db.session.commit()
 
-            # Add the current user to their own team
-            team_membership = TeamMembership(user_id=current_user.id, team_id=team.id)
+            # Add the current user to their own team with rank 'Owner'
+            team_membership = TeamMembership(user_id=current_user.id, team_id=team.id, rank='Owner')
             db.session.add(team_membership)
             db.session.commit()
 
         # Proceed with sending the invite
-        team_id = current_user.teams[0].id  # The team should now exist
+        team_id = current_user.teams[0].team_id  # The team should now exist
         notification = Notification(user_id=user_id, message=f'{current_user.username} has invited you to join their team.', team_id=team_id)
         db.session.add(notification)
         db.session.commit()
@@ -187,17 +213,20 @@ def send_invite():
 
 
 
+
 @app.route('/accept_invite/<int:notification_id>', methods=['POST'])
 @login_required
 def accept_invite(notification_id):
     notification = Notification.query.get(notification_id)
     if notification and notification.team_id:
-        team_membership = TeamMembership(user_id=current_user.id, team_id=notification.team_id)
+        # Add the user as a member with the rank 'Member'
+        team_membership = TeamMembership(user_id=current_user.id, team_id=notification.team_id, rank='Member')
         db.session.add(team_membership)
-        db.session.delete(notification)
+        db.session.delete(notification)  # Remove the notification after acceptance
         db.session.commit()
         return jsonify({'message': 'Invite accepted and joined the team!'})
     return jsonify({'error': 'Notification not found or no team associated!'}), 404
+
 
 @app.route('/remove_invite/<int:notification_id>', methods=['DELETE'])
 @login_required
