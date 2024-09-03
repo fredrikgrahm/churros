@@ -10,6 +10,7 @@ import Invite from './components/Invite';
 import Notifications from './components/Notifications';
 import NavBar from './components/NavBar';
 import Profile from './components/Profile';
+import Team from './components/Team';
 import axios from 'axios';
 import './App.css';
 
@@ -52,6 +53,7 @@ function App() {
           <Route path="/invite" element={<Invite />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile username={username} />} />
+          <Route path="/team" element={<Team />} /> {/* Add the new Team route */}
         </Routes>
       </div>
     </Router>

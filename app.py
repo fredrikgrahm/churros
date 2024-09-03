@@ -73,9 +73,28 @@ class TeamMembership(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
+    rank = db.Column(db.String(50), default='member')  # New field for rank
 
     user = db.relationship('User', back_populates='teams')
     team = db.relationship('Team', back_populates='members')
+
+@app.route('/team_members', methods=['GET'])
+@login_required
+def team_members():
+    if current_user.teams:
+        team_id = current_user.teams[0].team_id
+        members = db.session.query(User, TeamMembership).join(TeamMembership).filter(TeamMembership.team_id == team_id).all()
+        
+        team_members_data = []
+        for user, membership in members:
+            member_info = {
+                'username': user.username,
+                'rank': membership.rank
+            }
+            team_members_data.append(member_info)
+        
+        return jsonify(team_members_data)
+    return jsonify({'error': 'User is not part of any team.'}), 404
 
 
 @app.route('/team_stats', methods=['GET'])
