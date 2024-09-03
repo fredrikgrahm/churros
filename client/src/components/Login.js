@@ -18,13 +18,13 @@ const Login = ({ setIsLoggedIn }) => {
         setIsLoggedIn(true);
         setTimeout(() => {
           navigate('/dashboard');
-        }, 1000); // Redirect after 1 second
+        }, 1000); 
       }
     } catch (err) {
       setNotification({ type: 'error', message: 'Login failed. Please check your credentials and try again.' });
     }
   };
-  // this is a comment to see if it gets pushed
+  
   return (
     <div className="container">
       <h2>Login</h2>

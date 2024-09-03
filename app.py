@@ -27,6 +27,39 @@ class Team(db.Model):
     owner = db.relationship('User', back_populates='owned_teams')
     members = db.relationship('TeamMembership', back_populates='team')
 
+@app.route('/update_team_name', methods=['POST'])
+@login_required
+def update_team_name():
+    data = request.get_json()
+    new_name = data.get('name')
+
+    
+    if current_user.owned_teams:
+        team = current_user.owned_teams[0]  
+        
+        if Team.query.filter_by(name=new_name).first():
+            return jsonify({'error': 'Team name already exists!'}), 400
+        
+        team.name = new_name
+        db.session.commit()
+        return jsonify({'message': 'Team name updated successfully!', 'new_name': team.name})
+    else:
+        return jsonify({'error': 'You do not own any team to update!'}), 400
+        
+@app.route('/team_info', methods=['GET'])
+@login_required
+def team_info():
+    
+    if current_user.teams:
+        team_id = current_user.teams[0].team_id
+        team = Team.query.get(team_id)
+        if team:
+            return jsonify({'team_name': team.name})
+    return jsonify({'team_name': None})
+
+
+    
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), nullable=False, unique=True)
