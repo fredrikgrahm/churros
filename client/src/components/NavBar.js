@@ -4,6 +4,7 @@ import axios from 'axios';
 import ChurrosIcon from './ChurrosIcon';
 
 const NavBar = ({ isLoggedIn, setIsLoggedIn, username, setUsername }) => {
+  const [notificationCount, setNotificationCount] = useState(0); // New state for notification count
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -12,9 +13,19 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn, username, setUsername }) => {
         const response = await axios.get('http://localhost:5000/user', { withCredentials: true });
         if (response.status === 200) {
           setUsername(response.data.username);
+          fetchNotifications(); // Fetch notifications after user data is loaded
         }
       } catch (err) {
         console.error(err);
+      }
+    };
+
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/notifications', { withCredentials: true });
+        setNotificationCount(response.data.length); // Update the notification count
+      } catch (err) {
+        console.error('Error fetching notifications:', err);
       }
     };
 
@@ -28,6 +39,7 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn, username, setUsername }) => {
       await axios.post('http://localhost:5000/logout', {}, { withCredentials: true });
       setIsLoggedIn(false);
       setUsername('');
+      setNotificationCount(0); // Reset notifications on logout
       navigate('/');
     } catch (err) {
       console.error(err);
@@ -58,8 +70,11 @@ const NavBar = ({ isLoggedIn, setIsLoggedIn, username, setUsername }) => {
           <button>
             <Link to="/invite">Invite People</Link>
           </button>
-          <button>
+          <button className="notification-icon">
             <Link to="/notifications">Notifications</Link>
+            {notificationCount > 0 && (
+              <span className="notification-badge">{notificationCount}</span> // Notification badge
+            )}
           </button>
           <button onClick={handleLogout}>Logout</button>
         </>

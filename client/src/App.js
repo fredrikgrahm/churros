@@ -10,7 +10,6 @@ import Invite from './components/Invite';
 import Notifications from './components/Notifications';
 import NavBar from './components/NavBar';
 import Profile from './components/Profile';
-import Team from './components/Team';
 import axios from 'axios';
 import './App.css';
 
@@ -24,10 +23,11 @@ function App() {
         const response = await axios.get('http://localhost:5000/user', { withCredentials: true });
         if (response.status === 200) {
           setIsLoggedIn(true);
-          setUsername(response.data.username);
+          setUsername(response.data.username); // Set username if user is logged in
         }
       } catch (err) {
         setIsLoggedIn(false);
+        setUsername(''); // Clear username on error or if not logged in
       }
     };
 
@@ -36,11 +36,11 @@ function App() {
 
   return (
     <Router>
-      <NavBar 
-        isLoggedIn={isLoggedIn} 
-        setIsLoggedIn={setIsLoggedIn} 
-        username={username} 
-        setUsername={setUsername} 
+      <NavBar
+        isLoggedIn={isLoggedIn}
+        setIsLoggedIn={setIsLoggedIn}
+        username={username}
+        setUsername={setUsername} // Pass setUsername prop
       />
       <div className="container">
         <Routes>
@@ -53,7 +53,6 @@ function App() {
           <Route path="/invite" element={<Invite />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile username={username} />} />
-          <Route path="/team" element={<Team />} /> {/* Add the new Team route */}
         </Routes>
       </div>
     </Router>
@@ -61,3 +60,5 @@ function App() {
 }
 
 export default App;
+
+

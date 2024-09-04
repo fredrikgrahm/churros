@@ -13,7 +13,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 
-# Association table for team memberships
+
 team_memberships = db.Table('team_memberships',
     db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
     db.Column('team_id', db.Integer, db.ForeignKey('team.id'), primary_key=True)
@@ -60,10 +60,20 @@ def team_info():
 @app.route('/team_name', methods=['GET'])
 @login_required
 def team_name():
+    # Fetch the team that the current user is a part of
     team = Team.query.join(TeamMembership).filter(TeamMembership.user_id == current_user.id).first()
+
+    # Check if a team is found
     if team:
-        return jsonify({'name': team.name, 'isOwner': team.owner_id == current_user.id})
+        # Determine if the current user is the owner of the team
+        is_owner = team.owner_id == current_user.id
+        
+        # Return the team name, ID, and ownership status
+        return jsonify({'id': team.id, 'name': team.name, 'isOwner': is_owner})
+
+    # Return an error if no team is found
     return jsonify({'error': 'No team found'}), 404
+
 
     
 

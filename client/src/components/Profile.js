@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import UpdateTeamName from './UpdateTeamName';
+
 import axios from 'axios'; // Import axios to make HTTP requests
 
 const Profile = ({ username }) => {
@@ -41,8 +41,8 @@ const Profile = ({ username }) => {
         <li><Link to="/notifications">Notifications</Link></li>
       </ul>
 
-      {/* Include the UpdateTeamName Component */}
-      <UpdateTeamName />
+      
+      
     </div>
   );
 };
